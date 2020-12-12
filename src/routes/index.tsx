@@ -1,4 +1,5 @@
 import React from 'react';
+import { View } from 'react-native';
 
 import {
   useFonts,
@@ -9,7 +10,9 @@ import {
   Roboto_900Black,
 } from '@expo-google-fonts/roboto';
 import * as SplashScreen from 'expo-splash-screen';
+import LottieView from 'lottie-react-native';
 
+import { SplashAnimation } from '~/assets/animations';
 import { usePosition } from '~/hooks/getPosition';
 
 import AppRoutes from './app.routes';
@@ -26,10 +29,22 @@ const Routes: React.FC = () => {
   });
 
   if (loading || !fontsLoaded) {
-    return null;
+    SplashScreen.hideAsync();
+
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#719DFC',
+        }}
+      >
+        <LottieView source={SplashAnimation} autoPlay loop />
+      </View>
+    );
   }
 
-  SplashScreen.hideAsync();
   return <AppRoutes />;
 };
 
