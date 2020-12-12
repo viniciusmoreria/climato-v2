@@ -44,12 +44,6 @@
     "react/jsx-curly-newline": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".tsx"] }],
     "@typescript-eslint/camelcase": "off",
-    "@typescript-eslint/explicit-function-return-type": [
-      "error",
-      {
-        "allowExpressions": true
-      }
-    ],
     "import/extensions": [
       "error",
       "ignorePackages",
