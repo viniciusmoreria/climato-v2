@@ -1,0 +1,12 @@
+{
+  "name": "climato",
+  "displayName": "climato",
+  "expo": {
+    "name": "Climato",
+    "slug": "climato",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
