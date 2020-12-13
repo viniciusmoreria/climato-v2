@@ -8,6 +8,7 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "icon": "./src/assets/images/icon-app/icon.png",
     "splash": {
       "backgroundColor": "#719DFC"
     }

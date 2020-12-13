@@ -65,19 +65,17 @@ export const PositionProvider: React.FC = ({ children }) => {
       });
 
       const addressData = {
+        ...userAddress[0],
         state:
           userAddress[0].region &&
           (Platform.OS === 'ios'
             ? convertStates(userAddress[0].region)
             : userAddress[0].region),
-
         city:
           Platform.OS === 'android'
             ? userAddress[0].subregion
             : userAddress[0].city,
         neighborhood: userAddress[0].district,
-        street: userAddress[0].street,
-        country: userAddress[0].country,
         name:
           Platform.OS === 'android'
             ? `${userAddress[0].street} - ${userAddress[0].name}`

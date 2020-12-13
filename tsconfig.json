@@ -8,6 +8,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
+    "suppressImplicitAnyIndexErrors": true,
     "baseUrl": "src",
     "paths": {
       "~/*": ["*"]
