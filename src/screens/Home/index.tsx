@@ -7,11 +7,11 @@ import { format, startOfToday } from 'date-fns';
 import { pt } from 'date-fns/esm/locale';
 import LottieView from 'lottie-react-native';
 
-import { SunnyAnimation } from '~/assets/animations';
 import { ContainerScroll } from '~/components';
 import { usePosition } from '~/hooks/getPosition';
 import { fakeData } from '~/utils/fakeData';
 import weatherDescription from '~/utils/getWeatherDescription';
+import weatherIcon from '~/utils/getWeatherIcon';
 
 import {
   Container,
@@ -26,12 +26,18 @@ import {
   WeatherWrapper,
   Weather,
   WeatherDescription,
+  TabsContainer,
+  TabsTitle,
+  Holder,
 } from './styles';
+
+import { Today } from './Tabs';
 
 const Home: React.FC = () => {
   const { address } = usePosition();
   const { dispatch } = useNavigation();
   const [opacity] = useState(new Animated.Value(0));
+  const [tab, setTab] = useState('today');
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -84,7 +90,7 @@ const Home: React.FC = () => {
             <WeatherWrapper>
               <LottieView
                 style={{ height: 100 }}
-                source={SunnyAnimation}
+                source={weatherIcon[fakeData.current.weather[0].main]}
                 autoPlay
                 loop
               />
@@ -96,6 +102,36 @@ const Home: React.FC = () => {
               {weatherDescription[fakeData.current.weather[0].main]}
             </WeatherDescription>
           </WeatherContainer>
+
+          <TabsContainer>
+            <MenuButton onPress={() => setTab('today')}>
+              <TabsTitle style={{ opacity: tab === 'today' ? 1 : 0.4 }}>
+                Hoje
+              </TabsTitle>
+            </MenuButton>
+
+            <MenuButton onPress={() => setTab('tomorrow')}>
+              <TabsTitle style={{ opacity: tab === 'tomorrow' ? 1 : 0.4 }}>
+                Amanhã
+              </TabsTitle>
+            </MenuButton>
+
+            <MenuButton onPress={() => setTab('next')}>
+              <Holder>
+                <TabsTitle style={{ opacity: tab === 'next' ? 1 : 0.4 }}>
+                  Próximos 7 dias
+                </TabsTitle>
+                <Ionicons
+                  name="ios-arrow-forward"
+                  size={22}
+                  color="#fff"
+                  style={{ marginLeft: 5 }}
+                />
+              </Holder>
+            </MenuButton>
+          </TabsContainer>
+
+          {/* {Today()} */}
         </ContainerScroll>
       </Container>
     </Animated.View>

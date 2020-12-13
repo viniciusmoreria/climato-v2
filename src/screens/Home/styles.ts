@@ -50,7 +50,7 @@ export const Date = styled.Text`
 export const WeatherContainer = styled.View`
   width: 100%;
   align-items: center;
-  margin-top: 100px;
+  margin-top: 40px;
 `;
 
 export const WeatherWrapper = styled.View`
@@ -80,4 +80,24 @@ export const WeatherDescription = styled.Text`
   font-size: ${({ theme }) => theme.fontSizes.size18};
   font-family: ${({ theme }) => theme.fontFamily.RobotoLight};
   margin: 7px 0;
+`;
+
+export const TabsContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 100%;
+  margin-top: 30px;
+`;
+
+export const TabsTitle = styled.Text`
+  color: ${({ theme }) => theme.colors.white};
+  font-size: ${({ theme }) => theme.fontSizes.size18};
+  font-family: ${({ theme }) => theme.fontFamily.RobotoMedium};
+  margin: 7px 0;
+`;
+
+export const Holder = styled.View`
+  flex-direction: row;
+  align-items: center;
 `;

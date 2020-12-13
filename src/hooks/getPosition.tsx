@@ -14,6 +14,7 @@ import { convertStates } from '~/utils/convertStates';
 
 interface PositionContextData {
   loading: boolean;
+  hasPosition: boolean;
   address: AddressProps | undefined;
   getUserPosition(): Promise<any>;
 }
@@ -42,18 +43,22 @@ const PositionContext = createContext<PositionContextData>(
 export const PositionProvider: React.FC = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState<AddressProps>();
+  const [hasPosition, setHasPosition] = useState(false);
 
   const getUserPosition = useCallback(async () => {
     const { status } = await Location.requestPermissionsAsync();
 
     if (status !== 'granted') {
       console.log('Permission to access location was denied');
+      setHasPosition(false);
       return;
     }
 
     const location = await Location.getCurrentPositionAsync({});
 
     if (location !== null) {
+      setHasPosition(true);
+
       const pos = {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
@@ -99,6 +104,7 @@ export const PositionProvider: React.FC = ({ children }) => {
     <PositionContext.Provider
       value={{
         loading,
+        hasPosition,
         address,
         getUserPosition,
       }}
