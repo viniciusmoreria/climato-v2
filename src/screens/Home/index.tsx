@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Animated } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -33,9 +33,27 @@ import {
 
 import { Today } from './Tabs';
 
+const tabsData = [
+  {
+    id: 1,
+    label: 'Hoje',
+    value: 'today',
+  },
+  {
+    id: 2,
+    label: 'Amanhã',
+    value: 'tomorrow',
+  },
+  {
+    id: 3,
+    label: 'Próximos 7 dias',
+    value: 'next',
+  },
+];
+
 const Home: React.FC = () => {
   const { address } = usePosition();
-  const { dispatch } = useNavigation();
+  const { dispatch, navigate } = useNavigation();
   const [opacity] = useState(new Animated.Value(0));
   const [tab, setTab] = useState('today');
 
@@ -46,6 +64,32 @@ const Home: React.FC = () => {
       useNativeDriver: true,
     }).start();
   }, [opacity]);
+
+  const tabsMemo = useMemo(
+    () =>
+      tabsData.map((item) => (
+        <MenuButton
+          key={item.id}
+          onPress={() => {
+            item.value === 'next' ? navigate('NextDays') : setTab(item.value);
+          }}
+        >
+          <Holder style={{ opacity: tab === item.value ? 1 : 0.4 }}>
+            <TabsTitle>{item.label}</TabsTitle>
+
+            {item.value === 'next' && (
+              <Ionicons
+                name="ios-arrow-forward"
+                size={22}
+                color="#fff"
+                style={{ marginLeft: 5 }}
+              />
+            )}
+          </Holder>
+        </MenuButton>
+      )),
+    [tab],
+  );
 
   return (
     <Animated.View
@@ -103,35 +147,9 @@ const Home: React.FC = () => {
             </WeatherDescription>
           </WeatherContainer>
 
-          <TabsContainer>
-            <MenuButton onPress={() => setTab('today')}>
-              <TabsTitle style={{ opacity: tab === 'today' ? 1 : 0.4 }}>
-                Hoje
-              </TabsTitle>
-            </MenuButton>
+          <TabsContainer>{tabsMemo}</TabsContainer>
 
-            <MenuButton onPress={() => setTab('tomorrow')}>
-              <TabsTitle style={{ opacity: tab === 'tomorrow' ? 1 : 0.4 }}>
-                Amanhã
-              </TabsTitle>
-            </MenuButton>
-
-            <MenuButton onPress={() => setTab('next')}>
-              <Holder>
-                <TabsTitle style={{ opacity: tab === 'next' ? 1 : 0.4 }}>
-                  Próximos 7 dias
-                </TabsTitle>
-                <Ionicons
-                  name="ios-arrow-forward"
-                  size={22}
-                  color="#fff"
-                  style={{ marginLeft: 5 }}
-                />
-              </Holder>
-            </MenuButton>
-          </TabsContainer>
-
-          {/* {Today()} */}
+          <Today />
         </ContainerScroll>
       </Container>
     </Animated.View>

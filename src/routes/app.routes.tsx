@@ -23,6 +23,7 @@ const HomeStack: React.FC = () => (
     }}
   >
     <App.Screen name="Home" component={Views.Home} />
+    <App.Screen name="NextDays" component={Views.NextDays} />
   </App.Navigator>
 );
 
