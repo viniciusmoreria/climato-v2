@@ -22,7 +22,7 @@ export const fakeData: Weather = {
     weather: [
       {
         id: 802,
-        main: 'Clouds',
+        main: 'Drizzle',
         description: 'scattered clouds',
         icon: '03d',
       },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Animated } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,8 @@ import LottieView from 'lottie-react-native';
 
 import { ContainerScroll } from '~/components';
 import { usePosition } from '~/hooks/getPosition';
+import { Weather } from '~/models';
+import { getWeather } from '~/services/getWeather';
 import { fakeData } from '~/utils/fakeData';
 import weatherDescription from '~/utils/getWeatherDescription';
 import weatherIcon from '~/utils/getWeatherIcon';
@@ -24,7 +26,7 @@ import {
   WeatherContainer,
   GreetingText,
   WeatherWrapper,
-  Weather,
+  WeatherTemp,
   WeatherDescription,
   TabsContainer,
   TabsTitle,
@@ -54,8 +56,16 @@ const tabsData = [
 const Home: React.FC = () => {
   const { address } = usePosition();
   const { dispatch, navigate } = useNavigation();
+  const [weatherData, setWeatherData] = useState<Weather>(fakeData);
   const [opacity] = useState(new Animated.Value(0));
   const [tab, setTab] = useState('today');
+
+  const handleGetWeather = useCallback(async () => {
+    if (address !== null) {
+      const newWeatherData = await getWeather(address.lat, address.lng);
+      setWeatherData(newWeatherData);
+    }
+  }, [address]);
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -63,7 +73,9 @@ const Home: React.FC = () => {
       duration: 500,
       useNativeDriver: true,
     }).start();
-  }, [opacity]);
+
+    handleGetWeather();
+  }, [opacity, address, handleGetWeather]);
 
   const tabsMemo = useMemo(
     () =>
@@ -88,7 +100,7 @@ const Home: React.FC = () => {
           </Holder>
         </MenuButton>
       )),
-    [tab],
+    [tab, navigate],
   );
 
   return (
@@ -134,16 +146,16 @@ const Home: React.FC = () => {
             <WeatherWrapper>
               <LottieView
                 style={{ height: 100 }}
-                source={weatherIcon[fakeData.current.weather[0].main]}
+                source={weatherIcon[weatherData.current.weather[0].main]}
                 autoPlay
                 loop
               />
 
-              <Weather>{fakeData.current.temp.toFixed()}°</Weather>
+              <WeatherTemp>{weatherData.current.temp.toFixed()}°</WeatherTemp>
             </WeatherWrapper>
 
             <WeatherDescription>
-              {weatherDescription[fakeData.current.weather[0].main]}
+              {weatherDescription[weatherData.current.weather[0].main]}
             </WeatherDescription>
           </WeatherContainer>
 

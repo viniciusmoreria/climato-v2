@@ -15,7 +15,7 @@ import { convertStates } from '~/utils/convertStates';
 interface PositionContextData {
   loading: boolean;
   hasPosition: boolean;
-  address: AddressProps | undefined;
+  address: AddressProps;
   getUserPosition(): Promise<any>;
 }
 
@@ -26,8 +26,8 @@ interface AddressProps {
   street?: string | null;
   country?: string | null;
   name?: string | null;
-  lat?: number;
-  lng?: number;
+  lat: number;
+  lng: number;
   district?: string | null;
   region?: string | null;
   subregion?: string | null;

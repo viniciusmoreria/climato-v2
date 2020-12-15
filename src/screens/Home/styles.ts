@@ -9,7 +9,6 @@ export const Container = styled(LinearGradient).attrs({
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${({ theme }) => theme.colors.blue};
   padding: 20px;
 `;
 
@@ -68,7 +67,7 @@ export const GreetingText = styled.Text`
   margin: 7px 0;
 `;
 
-export const Weather = styled.Text`
+export const WeatherTemp = styled.Text`
   color: ${({ theme }) => theme.colors.white};
   font-size: 55px;
   font-family: ${({ theme }) => theme.fontFamily.RobotoExtraBold};
