@@ -1,4 +1,4 @@
-const weatherDailyIcon = {
+export const weatherDailyIcon = {
   Clouds: 'partly-sunny',
   Thunderstorm: 'thunderstorm',
   Drizzle: 'rainy',
@@ -9,4 +9,13 @@ const weatherDailyIcon = {
   Fog: 'cloud',
 };
 
-export default weatherDailyIcon;
+export const weatherDailyIconColor = {
+  Clouds: '#E7E750',
+  Thunderstorm: '#49498C',
+  Drizzle: '#49498C',
+  Rain: '#49498C',
+  Snow: '#49498C',
+  Clear: '#E7E750',
+  Mist: '#C2C2C2',
+  Fog: '#C2C2C2',
+};

@@ -13,6 +13,7 @@ import * as Location from 'expo-location';
 import { Weather } from '~/models';
 import { getWeather } from '~/services/getWeather';
 import { convertStates } from '~/utils/convertStates';
+import { fakeData } from '~/utils/fakeData';
 
 interface PositionContextData {
   loading: boolean;
@@ -99,7 +100,6 @@ export const PositionProvider: React.FC = ({ children }) => {
       };
 
       setAddress(addressData);
-      console.log(addressData);
     }
 
     setLoading(false);

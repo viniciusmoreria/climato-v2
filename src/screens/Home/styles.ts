@@ -102,7 +102,7 @@ export const WeatherDetailsCard = styled.View.attrs({
 
 export const WeatherDetailsHolder = styled.View`
   align-items: flex-start;
-  width: 80px;
+  width: 90px;
 `;
 
 export const WeatherDetailsTitle = styled.Text`

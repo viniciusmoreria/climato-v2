@@ -46,8 +46,6 @@ const Today: React.FC<Props> = ({ data }) => {
     ],
   };
 
-  console.log(data?.map((item) => item.temp));
-
   return (
     <Container>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>

@@ -1,14 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-} from 'react';
-import { Animated, View, Text } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Animated } from 'react-native';
 
-import BottomSheet from '@gorhom/bottom-sheet';
+import { AntDesign } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 
 import { BackgroundImage } from '~/assets/images';
@@ -34,10 +28,10 @@ import {
   WeatherDetailsHolder,
 } from './styles';
 
-import { Today } from './Tabs';
+import NextDays from '../NextDays';
+import Today from './Today';
 
 const Home: React.FC = () => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
   const { address, weatherData } = usePosition();
   const [opacity] = useState(new Animated.Value(0));
   const [currentHour] = useState(new Date().getHours());
@@ -47,7 +41,7 @@ const Home: React.FC = () => {
       {
         id: 1,
         question: 'Vento',
-        answer: `${weatherData.current.wind_speed} km/h`,
+        answer: `${(weatherData.current.wind_speed * (60 * 60)) / 1000} km/h`,
       },
       {
         id: 2,
@@ -75,27 +69,13 @@ const Home: React.FC = () => {
     [currentDetails],
   );
 
-  const handleSnapPress = useCallback((index) => {
-    bottomSheetRef.current?.snapTo(index);
-  }, []);
-
   useEffect(() => {
     Animated.timing(opacity, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
     }).start();
-
-    setTimeout(() => {
-      handleSnapPress(1);
-    }, 1000);
-
-    setTimeout(() => {
-      handleSnapPress(0);
-    }, 3000);
-  }, [opacity, address, handleSnapPress]);
-
-  const snapPoints = useMemo(() => ['3%', '50%'], []);
+  }, [opacity, address]);
 
   return (
     <Animated.View
@@ -110,6 +90,13 @@ const Home: React.FC = () => {
             <City>{address?.city}, </City>
 
             <State>{address?.state}</State>
+
+            <AntDesign
+              name="down"
+              size={18}
+              color="black"
+              style={{ marginLeft: 5 }}
+            />
           </LocationContainer>
 
           <WeatherContainer source={BackgroundImage}>
@@ -148,23 +135,7 @@ const Home: React.FC = () => {
           <Today data={weatherData.hourly} />
         </ContainerScroll>
 
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={0}
-          snapPoints={snapPoints}
-          enableHandlePanningGesture
-        >
-          <View
-            style={{
-              flex: 1,
-              padding: 24,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text>🎉</Text>
-          </View>
-        </BottomSheet>
+        <NextDays data={weatherData.daily} />
       </Container>
     </Animated.View>
   );

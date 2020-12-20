@@ -10,7 +10,5 @@ export async function getWeather(lat: number, lng: number): Promise<Weather> {
     `/onecall?lat=${lat}&lon=${lng}&exclude=minutely&&units=metric&appid=${WEATHER_API}`,
   );
 
-  console.log(response.data);
-
   return response.data;
 }
