@@ -10,12 +10,15 @@ import { Platform } from 'react-native';
 
 import * as Location from 'expo-location';
 
+import { Weather } from '~/models';
+import { getWeather } from '~/services/getWeather';
 import { convertStates } from '~/utils/convertStates';
 
 interface PositionContextData {
   loading: boolean;
   hasPosition: boolean;
   address: AddressProps;
+  weatherData: Weather;
   getUserPosition(): Promise<any>;
 }
 
@@ -42,8 +45,9 @@ const PositionContext = createContext<PositionContextData>(
 
 export const PositionProvider: React.FC = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [address, setAddress] = useState<AddressProps>();
+  const [address, setAddress] = useState<AddressProps>({} as AddressProps);
   const [hasPosition, setHasPosition] = useState(false);
+  const [weatherData, setWeatherData] = useState<Weather>({} as Weather);
 
   const getUserPosition = useCallback(async () => {
     const { status } = await Location.requestPermissionsAsync();
@@ -54,7 +58,9 @@ export const PositionProvider: React.FC = ({ children }) => {
       return;
     }
 
-    const location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.Low,
+    });
 
     if (location !== null) {
       setHasPosition(true);
@@ -63,6 +69,9 @@ export const PositionProvider: React.FC = ({ children }) => {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       };
+
+      const newWeatherData = await getWeather(pos.lat, pos.lng);
+      setWeatherData(newWeatherData);
 
       const userAddress = await Location.reverseGeocodeAsync({
         latitude: pos.lat,
@@ -105,6 +114,7 @@ export const PositionProvider: React.FC = ({ children }) => {
       value={{
         loading,
         hasPosition,
+        weatherData,
         address,
         getUserPosition,
       }}

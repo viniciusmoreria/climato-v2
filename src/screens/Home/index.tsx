@@ -1,71 +1,83 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Animated } from 'react-native';
+/* eslint-disable no-nested-ternary */
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+} from 'react';
+import { Animated, View, Text } from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
-import { format, startOfToday } from 'date-fns';
-import { pt } from 'date-fns/esm/locale';
+import BottomSheet from '@gorhom/bottom-sheet';
 import LottieView from 'lottie-react-native';
 
+import { BackgroundImage } from '~/assets/images';
 import { ContainerScroll } from '~/components';
 import { usePosition } from '~/hooks/getPosition';
-import { Weather } from '~/models';
-import { getWeather } from '~/services/getWeather';
-import { fakeData } from '~/utils/fakeData';
 import weatherDescription from '~/utils/getWeatherDescription';
 import weatherIcon from '~/utils/getWeatherIcon';
 
 import {
   Container,
-  Header,
-  MenuButton,
   LocationContainer,
   City,
   State,
-  Date,
+  CurrentDate,
   WeatherContainer,
-  GreetingText,
   WeatherWrapper,
   WeatherTemp,
   WeatherDescription,
-  TabsContainer,
-  TabsTitle,
-  Holder,
+  TempFeelsLike,
+  WeatherDetailsCard,
+  WeatherDetailsTitle,
+  WeatherDetailsDescription,
+  WeatherDetailsHolder,
 } from './styles';
 
 import { Today } from './Tabs';
 
-const tabsData = [
-  {
-    id: 1,
-    label: 'Hoje',
-    value: 'today',
-  },
-  {
-    id: 2,
-    label: 'Amanhã',
-    value: 'tomorrow',
-  },
-  {
-    id: 3,
-    label: 'Próximos 7 dias',
-    value: 'next',
-  },
-];
-
 const Home: React.FC = () => {
-  const { address } = usePosition();
-  const { dispatch, navigate } = useNavigation();
-  const [weatherData, setWeatherData] = useState<Weather>(fakeData);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const { address, weatherData } = usePosition();
   const [opacity] = useState(new Animated.Value(0));
-  const [tab, setTab] = useState('today');
+  const [currentHour] = useState(new Date().getHours());
 
-  const handleGetWeather = useCallback(async () => {
-    if (address !== null) {
-      const newWeatherData = await getWeather(address.lat, address.lng);
-      setWeatherData(newWeatherData);
-    }
-  }, [address]);
+  const currentDetails = useMemo(
+    () => [
+      {
+        id: 1,
+        question: 'Vento',
+        answer: `${weatherData.current.wind_speed} km/h`,
+      },
+      {
+        id: 2,
+        question: 'Umidade',
+        answer: `${weatherData.current.humidity}%`,
+      },
+      {
+        id: 3,
+        question: 'Visibilidade',
+        answer: `${weatherData.current.visibility / 1000} km`,
+      },
+    ],
+    [weatherData],
+  );
+
+  const weatherDetailsMemo = useMemo(
+    () =>
+      currentDetails.map((item) => (
+        <WeatherDetailsHolder key={item.id}>
+          <WeatherDetailsTitle>{item.question}</WeatherDetailsTitle>
+
+          <WeatherDetailsDescription>{item.answer}</WeatherDetailsDescription>
+        </WeatherDetailsHolder>
+      )),
+    [currentDetails],
+  );
+
+  const handleSnapPress = useCallback((index) => {
+    bottomSheetRef.current?.snapTo(index);
+  }, []);
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -74,75 +86,33 @@ const Home: React.FC = () => {
       useNativeDriver: true,
     }).start();
 
-    handleGetWeather();
-  }, [opacity, address, handleGetWeather]);
+    setTimeout(() => {
+      handleSnapPress(1);
+    }, 1000);
 
-  const tabsMemo = useMemo(
-    () =>
-      tabsData.map((item) => (
-        <MenuButton
-          key={item.id}
-          onPress={() => {
-            item.value === 'next' ? navigate('NextDays') : setTab(item.value);
-          }}
-        >
-          <Holder style={{ opacity: tab === item.value ? 1 : 0.4 }}>
-            <TabsTitle>{item.label}</TabsTitle>
+    setTimeout(() => {
+      handleSnapPress(0);
+    }, 3000);
+  }, [opacity, address, handleSnapPress]);
 
-            {item.value === 'next' && (
-              <Ionicons
-                name="ios-arrow-forward"
-                size={22}
-                color="#fff"
-                style={{ marginLeft: 5 }}
-              />
-            )}
-          </Holder>
-        </MenuButton>
-      )),
-    [tab, navigate],
-  );
+  const snapPoints = useMemo(() => ['3%', '50%'], []);
 
   return (
     <Animated.View
       style={{
         flex: 1,
-        width: '100%',
         opacity,
       }}
     >
       <Container>
-        <Header>
-          <MenuButton>
-            <Ionicons
-              name="ios-search"
-              size={28}
-              color="#fff"
-              style={{ marginRight: 10 }}
-            />
-          </MenuButton>
-
-          <MenuButton onPress={() => dispatch(DrawerActions.toggleDrawer())}>
-            <Ionicons name="ios-menu" size={36} color="#fff" />
-          </MenuButton>
-        </Header>
-
         <ContainerScroll>
           <LocationContainer>
-            <City>{address?.city},</City>
+            <City>{address?.city}, </City>
 
             <State>{address?.state}</State>
-
-            <Date>
-              {format(startOfToday(), 'eee, dd MMM', {
-                locale: pt,
-              })}
-            </Date>
           </LocationContainer>
 
-          <WeatherContainer>
-            <GreetingText>Hoje</GreetingText>
-
+          <WeatherContainer source={BackgroundImage}>
             <WeatherWrapper>
               <LottieView
                 style={{ height: 100 }}
@@ -151,18 +121,50 @@ const Home: React.FC = () => {
                 loop
               />
 
-              <WeatherTemp>{weatherData.current.temp.toFixed()}°</WeatherTemp>
+              <WeatherDescription>
+                {weatherDescription[weatherData.current.weather[0].main]}
+              </WeatherDescription>
+
+              <CurrentDate>
+                {currentHour < 12
+                  ? 'Manhã'
+                  : currentHour < 18
+                  ? 'Tarde'
+                  : 'Noite'}
+              </CurrentDate>
             </WeatherWrapper>
 
-            <WeatherDescription>
-              {weatherDescription[weatherData.current.weather[0].main]}
-            </WeatherDescription>
+            <WeatherWrapper>
+              <WeatherTemp>{weatherData.current.temp.toFixed(0)}°</WeatherTemp>
+
+              <TempFeelsLike>
+                Sensação de {weatherData.current.feels_like.toFixed(0)}°
+              </TempFeelsLike>
+            </WeatherWrapper>
           </WeatherContainer>
 
-          <TabsContainer>{tabsMemo}</TabsContainer>
+          <WeatherDetailsCard>{weatherDetailsMemo}</WeatherDetailsCard>
 
-          <Today />
+          <Today data={weatherData.hourly} />
         </ContainerScroll>
+
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={0}
+          snapPoints={snapPoints}
+          enableHandlePanningGesture
+        >
+          <View
+            style={{
+              flex: 1,
+              padding: 24,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text>🎉</Text>
+          </View>
+        </BottomSheet>
       </Container>
     </Animated.View>
   );
