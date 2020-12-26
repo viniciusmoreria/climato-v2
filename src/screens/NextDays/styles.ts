@@ -19,6 +19,7 @@ export const Title = styled.Text`
   font-size: ${({ theme }) => theme.fontSizes.size24};
   font-family: ${({ theme }) => theme.fontFamily.RobotoBold};
   text-align: center;
+  padding-bottom: 10px;
 `;
 
 export const Wrapper = styled.View`
