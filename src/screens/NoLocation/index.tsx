@@ -8,6 +8,7 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/mobile';
+import * as Location from 'expo-location';
 import LottieView from 'lottie-react-native';
 import { showMessage } from 'react-native-flash-message';
 import * as Yup from 'yup';
@@ -33,53 +34,68 @@ interface AddressProps {
   uf: string;
 }
 
+interface CoordsProps {
+  latitude: number;
+  longitude: number;
+  altitude?: number;
+  accuracy?: number;
+}
+
 const NoLocation: React.FC = () => {
-  const { hasPosition } = usePosition();
+  const { hasPosition, getUserManualPosition } = usePosition();
   const formRef = useRef<FormHandles>(null);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [keyboard, setKeyboard] = useState(false);
   const [cepText, setCepText] = useState('');
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState<AddressProps | null>(null);
+  const [coords, setCoords] = useState<CoordsProps | null>(null);
 
-  const handleSubmit = useCallback(async (data) => {
-    try {
-      setLoading(true);
+  const handleSubmit = useCallback(
+    async (data) => {
+      try {
+        setLoading(true);
 
-      formRef.current?.setErrors({});
+        formRef.current?.setErrors({});
 
-      const regexCEP = /\d{5}[-\s]?\d{3}/g;
+        const regexCEP = /\d{5}[-\s]?\d{3}/g;
 
-      const schema = Yup.object().shape({
-        cep: Yup.string().matches(regexCEP),
-      });
-
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      setLoading(false);
-      console.log(err);
-
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-
-        formRef.current?.setErrors(errors);
-
-        showMessage({
-          type: 'danger',
-          message: 'CEP inválido',
-          description: 'Tente novamente',
-          titleStyle: {
-            textAlign: 'center',
-          },
-          textStyle: {
-            textAlign: 'center',
-          },
+        const schema = Yup.object().shape({
+          cep: Yup.string().matches(regexCEP),
         });
+
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+
+        if (coords) {
+          await getUserManualPosition(coords.latitude, coords.longitude);
+        }
+      } catch (err) {
+        setLoading(false);
+        console.log(err);
+
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+
+          showMessage({
+            type: 'danger',
+            message: 'CEP inválido',
+            description: 'Tente novamente',
+            titleStyle: {
+              textAlign: 'center',
+            },
+            textStyle: {
+              textAlign: 'center',
+            },
+          });
+        }
       }
-    }
-  }, []);
+    },
+    [coords, getUserManualPosition],
+  );
 
   const getAddressByZipcode = useCallback(async (text: string) => {
     setCepText(text);
@@ -93,6 +109,12 @@ const NoLocation: React.FC = () => {
         console.log(response.data);
 
         setAddress(response.data);
+
+        const location = await Location.geocodeAsync(
+          `${response.data.logradouro}, ${response.data.localidade}`,
+        );
+        setCoords(location[0]);
+        console.log(location[0]);
       } else {
         showMessage({
           type: 'warning',
@@ -154,7 +176,7 @@ const NoLocation: React.FC = () => {
     >
       <Container>
         <Title>
-          {address
+          {address && cepText.length >= 9
             ? 'Encontramos sua localização!'
             : 'Não encontramos sua localização'}
         </Title>
@@ -193,7 +215,7 @@ const NoLocation: React.FC = () => {
                 }}
               />
 
-              {address && (
+              {address && cepText.length >= 9 && (
                 <>
                   <Address>
                     {address?.logradouro}, {address?.localidade} - {address?.uf}

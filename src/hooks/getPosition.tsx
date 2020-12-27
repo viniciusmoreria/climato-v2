@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { Platform } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
 import { Weather } from '~/models';
@@ -19,6 +20,7 @@ interface PositionContextData {
   address: AddressProps;
   weatherData: Weather;
   getUserPosition(): Promise<void>;
+  getUserManualPosition(lat: number, long: number): Promise<void>;
 }
 
 interface AddressProps {
@@ -58,6 +60,34 @@ export const PositionProvider: React.FC = ({ children }) => {
         -22.885639213520715,
         -43.33045667687955,
       );
+
+      const [
+        storagedLat,
+        storagedLng,
+        storagedAddress,
+      ] = await AsyncStorage.multiGet([
+        '@Climato: latitude',
+        '@Climato: longitude',
+        '@Climato: address',
+      ]);
+
+      if (storagedLat[1] && storagedLng[1] && storagedAddress[1]) {
+        console.log(storagedLat[1]);
+        console.log(storagedLng[1]);
+        console.log(JSON.parse(storagedAddress[1]));
+
+        const weatherDataWithStoragedLatLng = await getWeather(
+          Number(storagedLat[1]),
+          Number(storagedLng[1]),
+        );
+
+        setWeatherData(weatherDataWithStoragedLatLng);
+        setAddress(JSON.parse(storagedAddress[1]));
+        setHasPosition(true);
+        setLoading(false);
+
+        return;
+      }
 
       setWeatherData(newWeatherData);
       setHasPosition(false);
@@ -115,6 +145,58 @@ export const PositionProvider: React.FC = ({ children }) => {
     getUserPosition();
   }, [getUserPosition]);
 
+  const getUserManualPosition = useCallback(
+    async (lat: number, long: number) => {
+      if (lat && long) {
+        setHasPosition(true);
+
+        const pos = {
+          lat,
+          lng: long,
+        };
+
+        const newWeatherData = await getWeather(pos.lat, pos.lng);
+        setWeatherData(newWeatherData);
+
+        const userAddress = await Location.reverseGeocodeAsync({
+          latitude: pos.lat,
+          longitude: pos.lng,
+        });
+
+        const addressData = {
+          ...userAddress[0],
+          state:
+            userAddress[0].region &&
+            (Platform.OS === 'ios'
+              ? convertStates(userAddress[0].region)
+              : userAddress[0].region),
+          city:
+            Platform.OS === 'android'
+              ? userAddress[0].subregion
+              : userAddress[0].city,
+          neighborhood: userAddress[0].district,
+          name:
+            Platform.OS === 'android'
+              ? `${userAddress[0].street} - ${userAddress[0].name}`
+              : userAddress[0].name,
+          lat: pos.lat,
+          lng: pos.lng,
+        };
+
+        setAddress(addressData);
+
+        await AsyncStorage.multiSet([
+          ['@Climato: latitude', pos.lat.toString()],
+          ['@Climato: longitude', pos.lng.toString()],
+          ['@Climato: address', JSON.stringify(addressData)],
+        ]);
+      }
+
+      setLoading(false);
+    },
+    [],
+  );
+
   return (
     <PositionContext.Provider
       value={{
@@ -123,6 +205,7 @@ export const PositionProvider: React.FC = ({ children }) => {
         weatherData,
         address,
         getUserPosition,
+        getUserManualPosition,
       }}
     >
       {children}
