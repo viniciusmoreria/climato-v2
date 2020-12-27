@@ -9,6 +9,7 @@ import BottomSheet, {
 import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
 
+import { usePosition } from '~/hooks/getPosition';
 import { Daily } from '~/models';
 import {
   weatherDailyIcon,
@@ -22,6 +23,8 @@ interface Props {
 }
 
 const NextDays: React.FC<Props> = ({ data }) => {
+  const { hasPosition } = usePosition();
+
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const handleSnapPress = useCallback((index) => {
@@ -29,14 +32,16 @@ const NextDays: React.FC<Props> = ({ data }) => {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      handleSnapPress(1);
-    }, 1000);
+    if (hasPosition) {
+      setTimeout(() => {
+        handleSnapPress(1);
+      }, 1000);
 
-    setTimeout(() => {
-      handleSnapPress(0);
-    }, 3000);
-  }, [handleSnapPress]);
+      setTimeout(() => {
+        handleSnapPress(0);
+      }, 3000);
+    }
+  }, [handleSnapPress, hasPosition]);
 
   const renderItem = useCallback(
     (item: Daily) => (

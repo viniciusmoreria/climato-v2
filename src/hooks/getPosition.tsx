@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {
   createContext,
   useState,
@@ -13,14 +12,13 @@ import * as Location from 'expo-location';
 import { Weather } from '~/models';
 import { getWeather } from '~/services/getWeather';
 import { convertStates } from '~/utils/convertStates';
-import { fakeData } from '~/utils/fakeData';
 
 interface PositionContextData {
   loading: boolean;
   hasPosition: boolean;
   address: AddressProps;
   weatherData: Weather;
-  getUserPosition(): Promise<any>;
+  getUserPosition(): Promise<void>;
 }
 
 interface AddressProps {
@@ -55,7 +53,15 @@ export const PositionProvider: React.FC = ({ children }) => {
 
     if (status !== 'granted') {
       console.log('Permission to access location was denied');
+
+      const newWeatherData = await getWeather(
+        -22.885639213520715,
+        -43.33045667687955,
+      );
+
+      setWeatherData(newWeatherData);
       setHasPosition(false);
+      setLoading(false);
       return;
     }
 

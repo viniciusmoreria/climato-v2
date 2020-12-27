@@ -12,6 +12,7 @@ export default {
     black: '#000000',
     yellow: '#EDEF39',
     shadow: '#E7EAF0',
+    green: '#009819',
   },
   fontSizes: {
     size9: '9px',

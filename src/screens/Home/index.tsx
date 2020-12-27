@@ -29,10 +29,11 @@ import {
 } from './styles';
 
 import NextDays from '../NextDays';
+import NoLocation from '../NoLocation';
 import Today from './Today';
 
 const Home: React.FC = () => {
-  const { address, weatherData } = usePosition();
+  const { address, weatherData, hasPosition } = usePosition();
   const [opacity] = useState(new Animated.Value(0));
   const [currentHour] = useState(new Date().getHours());
 
@@ -87,9 +88,9 @@ const Home: React.FC = () => {
       <Container>
         <ContainerScroll>
           <LocationContainer>
-            <City>{address?.city}, </City>
+            <City>{address?.city ?? 'Rio de Janeiro'}, </City>
 
-            <State>{address?.state}</State>
+            <State>{address?.state ?? 'RJ'}</State>
 
             <AntDesign
               name="down"
@@ -136,6 +137,8 @@ const Home: React.FC = () => {
         </ContainerScroll>
 
         <NextDays data={weatherData.daily} />
+
+        {!hasPosition && <NoLocation />}
       </Container>
     </Animated.View>
   );

@@ -5,6 +5,7 @@ import { StatusBar } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import * as Updates from 'expo-updates';
+import FlashMessage from 'react-native-flash-message';
 import { ThemeProvider } from 'styled-components';
 
 import light from './styles/themes/light';
@@ -37,6 +38,7 @@ const App: React.FC = () => {
         <ThemeProvider theme={theme}>
           <StatusBar hidden />
           <Routes />
+          <FlashMessage position="top" />
         </ThemeProvider>
       </PositionProvider>
     </NavigationContainer>

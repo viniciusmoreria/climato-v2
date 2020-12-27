@@ -9,7 +9,6 @@ import {
   Roboto_700Bold,
   Roboto_900Black,
 } from '@expo-google-fonts/roboto';
-import * as SplashScreen from 'expo-splash-screen';
 import LottieView from 'lottie-react-native';
 
 import { SplashAnimation } from '~/assets/animations';
@@ -29,8 +28,6 @@ const Routes: React.FC = () => {
   });
 
   if (loading || !fontsLoaded) {
-    SplashScreen.hideAsync();
-
     return (
       <View
         style={{

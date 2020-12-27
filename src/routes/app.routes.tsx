@@ -21,6 +21,7 @@ const AppRoutes: React.FC = () => (
   >
     <App.Screen name="Home" component={Views.Home} />
     <App.Screen name="NextDays" component={Views.NextDays} />
+    <App.Screen name="NoLocation" component={Views.NoLocation} />
   </App.Navigator>
 );
 

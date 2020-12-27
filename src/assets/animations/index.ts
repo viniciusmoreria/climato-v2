@@ -6,3 +6,4 @@ export { default as FogAnimation } from './fog/fog.json';
 export { default as SnowAnimation } from './snow/snow.json';
 export { default as ThunderAnimation } from './thunder/thunder.json';
 export { default as DrizzleAnimation } from './drizzle/drizzle.json';
+export { default as GpsAnimation } from './gps/gps.json';
