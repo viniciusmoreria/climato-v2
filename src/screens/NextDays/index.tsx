@@ -16,7 +16,15 @@ import {
   weatherDailyIconColor,
 } from '~/utils/getWeatherDailyIcon';
 
-import { Container, WeatherCard, Title, Wrapper, Hour, Temp } from './styles';
+import {
+  Container,
+  WeatherCard,
+  Holder,
+  Title,
+  Wrapper,
+  WeatherDate,
+  Temp,
+} from './styles';
 
 interface Props {
   data: Daily[];
@@ -46,20 +54,31 @@ const NextDays: React.FC<Props> = ({ data }) => {
   const renderItem = useCallback(
     (item: Daily) => (
       <WeatherCard key={item.dt}>
-        <Hour>
+        <WeatherDate>
           {format(new Date(item.dt * 1000), 'EEEE', {
             locale: pt,
           })}
-        </Hour>
+        </WeatherDate>
 
         <Wrapper>
-          <Ionicons
-            name={weatherDailyIcon[item.weather[0].main]}
-            size={22}
-            color={weatherDailyIconColor[item.weather[0].main]}
-          />
+          <Holder>
+            <Ionicons
+              name={weatherDailyIcon[item.weather[0].main]}
+              size={22}
+              color={weatherDailyIconColor[item.weather[0].main]}
+              style={{ marginRight: 5 }}
+            />
 
-          <Temp>{item.temp.day.toFixed(0)}°</Temp>
+            <Ionicons name="ios-arrow-down" size={22} color="#1A42E3" />
+
+            <Temp>{item.temp.min.toFixed(0)}°</Temp>
+          </Holder>
+
+          <Holder>
+            <Ionicons name="ios-arrow-up" size={22} color="#E20613" />
+
+            <Temp>{item.temp.max.toFixed(0)}°</Temp>
+          </Holder>
         </Wrapper>
       </WeatherCard>
     ),

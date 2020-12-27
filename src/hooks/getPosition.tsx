@@ -72,10 +72,6 @@ export const PositionProvider: React.FC = ({ children }) => {
       ]);
 
       if (storagedLat[1] && storagedLng[1] && storagedAddress[1]) {
-        console.log(storagedLat[1]);
-        console.log(storagedLng[1]);
-        console.log(JSON.parse(storagedAddress[1]));
-
         const weatherDataWithStoragedLatLng = await getWeather(
           Number(storagedLat[1]),
           Number(storagedLng[1]),

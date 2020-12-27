@@ -24,17 +24,21 @@ export const Title = styled.Text`
 
 export const Wrapper = styled.View`
   flex-direction: row;
-  align-items: center;
+  justify-content: space-between;
 `;
 
-export const Hour = styled.Text`
+export const Holder = styled.View`
+  flex-direction: row;
+  margin-left: 7px;
+`;
+
+export const WeatherDate = styled.Text`
   color: ${({ theme }) => theme.colors.black};
   font-size: ${({ theme }) => theme.fontSizes.size16};
   font-family: ${({ theme }) => theme.fontFamily.RobotoMedium};
   text-transform: capitalize;
 `;
 
-export const Temp = styled(Hour)`
+export const Temp = styled(WeatherDate)`
   font-family: ${({ theme }) => theme.fontFamily.RobotoExtraBold};
-  margin-left: 15px;
 `;

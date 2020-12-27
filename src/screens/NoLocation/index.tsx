@@ -13,7 +13,7 @@ import LottieView from 'lottie-react-native';
 import { showMessage } from 'react-native-flash-message';
 import * as Yup from 'yup';
 
-import { GpsAnimation } from '~/assets/animations';
+import { GpsAnimation, SearchAnimationBlack } from '~/assets/animations';
 import { Button, MaskedInput } from '~/components';
 import { usePosition } from '~/hooks/getPosition';
 import api from '~/services/api';
@@ -51,51 +51,40 @@ const NoLocation: React.FC = () => {
   const [address, setAddress] = useState<AddressProps | null>(null);
   const [coords, setCoords] = useState<CoordsProps | null>(null);
 
-  const handleSubmit = useCallback(
-    async (data) => {
-      try {
-        setLoading(true);
+  const handleSubmit = useCallback(async () => {
+    try {
+      setLoading(true);
 
-        formRef.current?.setErrors({});
+      formRef.current?.setErrors({});
 
-        const regexCEP = /\d{5}[-\s]?\d{3}/g;
+      if (coords) {
+        await getUserManualPosition(coords.latitude, coords.longitude);
 
-        const schema = Yup.object().shape({
-          cep: Yup.string().matches(regexCEP),
-        });
-
-        await schema.validate(data, {
-          abortEarly: false,
-        });
-
-        if (coords) {
-          await getUserManualPosition(coords.latitude, coords.longitude);
-        }
-      } catch (err) {
         setLoading(false);
-        console.log(err);
-
-        if (err instanceof Yup.ValidationError) {
-          const errors = getValidationErrors(err);
-
-          formRef.current?.setErrors(errors);
-
-          showMessage({
-            type: 'danger',
-            message: 'CEP inválido',
-            description: 'Tente novamente',
-            titleStyle: {
-              textAlign: 'center',
-            },
-            textStyle: {
-              textAlign: 'center',
-            },
-          });
-        }
       }
-    },
-    [coords, getUserManualPosition],
-  );
+    } catch (err) {
+      setLoading(false);
+      console.log(err);
+
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+
+        showMessage({
+          type: 'danger',
+          message: 'CEP inválido',
+          description: 'Tente novamente',
+          titleStyle: {
+            textAlign: 'center',
+          },
+          textStyle: {
+            textAlign: 'center',
+          },
+        });
+      }
+    }
+  }, [coords, getUserManualPosition]);
 
   const getAddressByZipcode = useCallback(async (text: string) => {
     setCepText(text);
@@ -221,9 +210,18 @@ const NoLocation: React.FC = () => {
                     {address?.logradouro}, {address?.localidade} - {address?.uf}
                   </Address>
 
-                  <Button onPress={() => formRef.current?.submitForm()}>
-                    Confirmar
-                  </Button>
+                  {loading ? (
+                    <LottieView
+                      style={{ height: 220, alignSelf: 'center' }}
+                      source={SearchAnimationBlack}
+                      autoPlay
+                      loop
+                    />
+                  ) : (
+                    <Button onPress={() => formRef.current?.submitForm()}>
+                      Confirmar
+                    </Button>
+                  )}
                 </>
               )}
             </Form>

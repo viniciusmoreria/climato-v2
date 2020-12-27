@@ -17,6 +17,7 @@ interface InputProps extends TextInputMaskProps {
   initialValue?: string;
   options?: TextInputMaskOptionProp;
   placeholderTextColor?: string;
+  backgroundColor?: string;
 }
 
 interface InputValueReference {
@@ -29,6 +30,7 @@ const InputMask: React.FC<InputProps> = ({
   initialValue,
   options,
   placeholderTextColor,
+  backgroundColor,
   ...rest
 }) => {
   const inputElementRef = useRef(null);
@@ -72,7 +74,11 @@ const InputMask: React.FC<InputProps> = ({
   }, []);
 
   return (
-    <Container isFocused={isFocused} isErrored={!!error}>
+    <Container
+      isFocused={isFocused}
+      isErrored={!!error}
+      style={{ backgroundColor: backgroundColor ?? '#eee' }}
+    >
       <TextInputMask
         type={type}
         includeRawValueInChangeText

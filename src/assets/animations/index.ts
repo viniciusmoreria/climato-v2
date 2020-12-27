@@ -7,3 +7,5 @@ export { default as SnowAnimation } from './snow/snow.json';
 export { default as ThunderAnimation } from './thunder/thunder.json';
 export { default as DrizzleAnimation } from './drizzle/drizzle.json';
 export { default as GpsAnimation } from './gps/gps.json';
+export { default as SearchAnimation } from './search/search.json';
+export { default as SearchAnimationBlack } from './search/search-black.json';

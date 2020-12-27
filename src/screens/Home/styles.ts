@@ -25,6 +25,8 @@ export const State = styled(City)`
   font-family: ${({ theme }) => theme.fontFamily.RobotoRegular};
 `;
 
+export const Touchable = styled.TouchableOpacity``;
+
 export const CurrentDate = styled.Text`
   color: ${({ theme }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSizes.size15};

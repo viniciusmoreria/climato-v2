@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Animated } from 'react-native';
 
 import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 
 import { BackgroundImage } from '~/assets/images';
@@ -16,6 +17,7 @@ import {
   LocationContainer,
   City,
   State,
+  Touchable,
   CurrentDate,
   WeatherContainer,
   WeatherWrapper,
@@ -33,6 +35,7 @@ import NoLocation from '../NoLocation';
 import Today from './Today';
 
 const Home: React.FC = () => {
+  const { navigate } = useNavigation();
   const { address, weatherData, hasPosition } = usePosition();
   const [opacity] = useState(new Animated.Value(0));
   const [currentHour] = useState(new Date().getHours());
@@ -87,18 +90,20 @@ const Home: React.FC = () => {
     >
       <Container>
         <ContainerScroll>
-          <LocationContainer>
-            <City>{address?.city ?? 'Rio de Janeiro'}, </City>
+          <Touchable onPress={() => navigate('NewLocation')}>
+            <LocationContainer>
+              <City>{address?.city ?? 'Rio de Janeiro'}, </City>
 
-            <State>{address?.state ?? 'RJ'}</State>
+              <State>{address?.state ?? 'RJ'}</State>
 
-            <AntDesign
-              name="down"
-              size={18}
-              color="black"
-              style={{ marginLeft: 5 }}
-            />
-          </LocationContainer>
+              <AntDesign
+                name="down"
+                size={18}
+                color="black"
+                style={{ marginLeft: 5 }}
+              />
+            </LocationContainer>
+          </Touchable>
 
           <WeatherContainer source={BackgroundImage}>
             <WeatherWrapper>

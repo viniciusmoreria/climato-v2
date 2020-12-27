@@ -13,7 +13,7 @@ const AppRoutes: React.FC = () => (
   <App.Navigator
     screenOptions={{
       headerShown: false,
-      ...TransitionPresets.SlideFromRightIOS,
+      ...TransitionPresets.ModalPresentationIOS,
       cardStyle: {
         backgroundColor: '#ffffff',
       },
@@ -22,6 +22,7 @@ const AppRoutes: React.FC = () => (
     <App.Screen name="Home" component={Views.Home} />
     <App.Screen name="NextDays" component={Views.NextDays} />
     <App.Screen name="NoLocation" component={Views.NoLocation} />
+    <App.Screen name="NewLocation" component={Views.NewLocation} />
   </App.Navigator>
 );
 
