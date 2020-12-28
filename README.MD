@@ -30,9 +30,10 @@ I wanted to try and see how hard would it be to implement one of my favourite we
 - [ ] Google Search instead of zipcode search
 - [ ] Translations
 - [ ] Dark Mode
-- [ ] Swipe to new locations
 - [ ] Store new locations
 - [ ] Swipe to new locations
+- [ ] News
+- [ ] Alerts
 
 ## Development stack
 + [React Native](https://reactnative.dev/)
