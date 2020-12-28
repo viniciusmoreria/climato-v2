@@ -4,6 +4,7 @@
   "expo": {
     "name": "Climato",
     "slug": "climato",
+    "description": "Previsão do tempo.",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
@@ -11,6 +12,14 @@
     "icon": "./src/assets/images/icon-app/icon.png",
     "splash": {
       "backgroundColor": "#719DFC"
+    },
+    "ios": {
+      "bundleIdentifier": "com.viniciusmoreeira.climato",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Precisamos do seu endereço para lhe entregar dados mais precisos.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Precisamos do seu endereço para lhe entregar dados mais precisos.",
+        "NSLocationUsageDescription": "Precisamos do seu endereço para lhe entregar dados mais precisos."
+      }
     }
   }
 }
