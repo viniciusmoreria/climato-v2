@@ -15,17 +15,22 @@
     <img alt="License" src="https://img.shields.io/badge/license-MIT-brightgreen">
 </p>
 
+<img src="https://i.imgur.com/317bIMG.png" width="100%" alt="Climato overview"/>
+
 ## Inspiration
-I wanted to try and see how hard would it be to implement one of my favourite weather apps designs: [Weather App by Emmanuel Ikechukwu](https://dribbble.com/shots/12869395-Weather-App/attachments/4468922?mode=media). Full credits for user experience goes to him.
+I wanted to try and see how hard would it be to implement one of my favourite weather app design: [Weather App by Emmanuel Ikechukwu](https://dribbble.com/shots/12869395-Weather-App/attachments/4468922?mode=media). Full credits for user experience goes to him.
 
 ## Current progress
 - [x] App skeleton
 - [x] Basic UI prototype
 - [x] Call Weather APIs for data
 - [x] Implement weather service
-- [x] Implement new location from zipcode
+- [x] Implement new location from zipcode(Brazil only)
 - [ ] Daily weather details
+- [ ] Google Search instead of zipcode search
+- [ ] Translations
 - [ ] Dark Mode
+- [ ] Swipe to new locations
 - [ ] Store new locations
 - [ ] Swipe to new locations
 
